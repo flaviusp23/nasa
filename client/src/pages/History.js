@@ -8,7 +8,7 @@ const History = props => {
         return <tr key={String(launch.flightNumber)}>
           <td>
             <span style={
-              {color: launch.success ? "red" : "red"}
+              {color: launch.success ? "greenyellow" : "red"}
             }>█</span>
           </td>
           <td>{launch.flightNumber}</td>

@@ -67,7 +67,7 @@ async function populateLaunches() {
   
       console.log(`${launch.flightNumber} ${launch.mission}`);
   
-    //   await saveLaunch(launch);
+      await saveLaunch(launch);
     }
   }
 
@@ -114,12 +114,6 @@ async function getAllLaunches(){
 }
 
 async function saveLaunch(launch){
-    const planet = await planets.findOne({keplerName: launch.target,})
-
-    if(!planet){
-        throw new Error('No matching planet was found.')
-    }
-
     await launchesDatabase.findOneAndUpdate({ // e mai bine decat update pt ca trimite fix minimul de informatii necesare
         flightNumber: launch.flightNumber,    // diferenta e ca va returna fix proprietatile pe care le modificam 
     },launch,{
@@ -128,6 +122,11 @@ async function saveLaunch(launch){
 }
 
 async function scheduleNewLaunch(launch){
+    const planet = await planets.findOne({keplerName: launch.target,})
+
+    if(!planet){
+        throw new Error('No matching planet was found.')
+    }
     const newFlightNumber = await getLatestFlightNumber() + 1;
 
     const newLaunch = Object.assign(launch, {
