@@ -12,13 +12,14 @@
   "author": "",
   "license": "ISC",
   "keywords": [],
-  "jest":{
-    "testEnvironment":"node"
+  "jest": {
+    "testEnvironment": "node"
   },
   "description": "NASA Mission Control API",
   "dependencies": {
     "cors": "^2.8.5",
     "csv-parse": "^5.5.6",
+    "dotenv": "^16.4.5",
     "express": "^4.19.2",
     "pm2": "^5.4.2"
   },
