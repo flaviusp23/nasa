@@ -43,6 +43,7 @@ function useLaunches(onSuccessSound, onAbortSound, onFailureSound) {
         onSuccessSound();
       }, 800);
     } else {
+      setPendingLaunch(false);
       onFailureSound();
     }
   }, [getLaunches, onSuccessSound, onFailureSound]);
