@@ -35,7 +35,7 @@ const Upcoming = (props) => {
 
   const handlePageChange = async (newPage) => {
     if (newPage > 0) {
-      // Fetch launches for the next page to check if it's empty
+      // Fetch launches for the new page to check if it's empty
       const nextPageLaunches = await fetchLaunches(newPage);
       if (nextPageLaunches.length > 0) {
         setCurrentPage(newPage);
@@ -53,12 +53,13 @@ const Upcoming = (props) => {
     [abortLaunch, fetchLaunches, currentPage]
   );
 
+  // Memoize table body
   const tableBody = useMemo(() => {
     return launches
       .filter((launch) => launch.upcoming)
       .map((launch) => (
         <tr key={String(launch.flightNumber)}>
-          <td>
+          <td style={{ textAlign: "center" }}>
             <Clickable style={{ color: 'red' }}>
               <Link
                 className={classes.link}
@@ -68,11 +69,19 @@ const Upcoming = (props) => {
               </Link>
             </Clickable>
           </td>
-          <td>{launch.flightNumber}</td>
-          <td>{new Date(launch.launchDate).toDateString()}</td>
-          <td>{launch.mission}</td>
-          <td>{launch.rocket}</td>
-          <td>{launch.target}</td>
+          <td style={{ textAlign: "center" }}>{launch.flightNumber}</td>
+          <td style={{ maxWidth: "10rem", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }} title={new Date(launch.launchDate).toDateString()}>
+            {new Date(launch.launchDate).toDateString()}
+          </td>
+          <td style={{ maxWidth: "11rem", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }} title={launch.mission}>
+            {launch.mission}
+          </td>
+          <td style={{ maxWidth: "11rem", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }} title={launch.rocket}>
+            {launch.rocket}
+          </td>
+          <td style={{ maxWidth: "15rem", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }} title={launch.target}>
+            {launch.target}
+          </td>
         </tr>
       ));
   }, [launches, handleAbort, classes.link]);
@@ -92,7 +101,7 @@ const Upcoming = (props) => {
               <th style={{ width: '10rem' }}>Date</th>
               <th style={{ width: '11rem' }}>Mission</th>
               <th style={{ width: '11rem' }}>Rocket</th>
-              <th>Destination</th>
+              <th style={{ width: '15rem' }}>Destination</th>
             </tr>
           </thead>
           <tbody>
@@ -108,12 +117,17 @@ const Upcoming = (props) => {
           </tbody>
         </table>
       </Table>
-      <div style={{ display: 'flex', justifyContent: 'center', marginTop: '1rem' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: '1rem' }}>
         <span
           style={{ fontSize: '2rem', margin: '0 1rem', cursor: 'pointer' }}
           onClick={() => handlePageChange(currentPage - 1)}
         >
           ←
+        </span>
+        <span
+          style={{ fontSize: '2rem', margin: '0 1rem' }}
+        >
+          {currentPage}
         </span>
         <span
           style={{ fontSize: '2rem', margin: '0 1rem', cursor: 'pointer' }}

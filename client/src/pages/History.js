@@ -42,14 +42,22 @@ const History = (props) => {
   const tableBody = useMemo(() => {
     return launches.map((launch) => (
       <tr key={String(launch.flightNumber)}>
-        <td>
+        <td style={{ textAlign: "center" }}>
           <span style={{ color: launch.success ? "greenyellow" : "red" }}>█</span>
         </td>
-        <td>{launch.flightNumber}</td>
-        <td>{new Date(launch.launchDate).toDateString()}</td>
-        <td>{launch.mission}</td>
-        <td>{launch.rocket}</td>
-        <td>{launch.customers?.join(", ")}</td>
+        <td style={{ textAlign: "center" }}>{launch.flightNumber}</td>
+        <td style={{ maxWidth: "9rem", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }} title={new Date(launch.launchDate).toDateString()}>
+          {new Date(launch.launchDate).toDateString()}
+        </td>
+        <td style={{ maxWidth: "15rem", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }} title={launch.mission}>
+          {launch.mission}
+        </td>
+        <td style={{ maxWidth: "7rem", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }} title={launch.rocket}>
+          {launch.rocket}
+        </td>
+        <td style={{ maxWidth: "15rem", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }} title={launch.customers?.join(", ")}>
+          {launch.customers?.join(", ")}
+        </td>
       </tr>
     ));
   }, [launches]);
@@ -75,12 +83,15 @@ const History = (props) => {
             <tbody>{tableBody}</tbody>
           </table>
         </Table>
-        <div style={{ display: "flex", justifyContent: "center", marginTop: "1rem" }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", marginTop: "1rem" }}>
           <span
             style={{ fontSize: "2rem", margin: "0 1rem", cursor: "pointer" }}
             onClick={() => handlePageChange(currentPage - 1)}
           >
             ←
+          </span>
+          <span style={{ fontSize: "2rem", margin: "0 1rem" }}>
+            {currentPage}
           </span>
           <span
             style={{ fontSize: "2rem", margin: "0 1rem", cursor: "pointer" }}
