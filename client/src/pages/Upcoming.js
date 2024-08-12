@@ -1,9 +1,9 @@
 import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import { Appear, Table, Paragraph, Words, withStyles } from 'arwes';
 import { useParams, useHistory } from 'react-router-dom';
-import { httpGetLaunchesUpcoming } from '../hooks/requests'; // Adjust the path if needed
-import Clickable from '../components/Clickable'; // Ensure this path is correct
-import { Link } from 'react-router-dom'; // Import Link for navigation
+import { httpGetLaunchesUpcoming } from '../hooks/requests';
+import Clickable from '../components/Clickable';
+import { Link } from 'react-router-dom';
 
 const styles = () => ({
   link: {
@@ -36,6 +36,15 @@ const Upcoming = (props) => {
     }
   };
 
+  // Memoize handleAbort to avoid it changing on every render
+  const handleAbort = useCallback(
+    async (id) => {
+      await abortLaunch(id); // Abort the launch
+      fetchLaunches(); // Ensure it refetches the launches
+    },
+    [abortLaunch, fetchLaunches]
+  );
+
   const tableBody = useMemo(() => {
     return launches
       .filter((launch) => launch.upcoming)
@@ -45,7 +54,7 @@ const Upcoming = (props) => {
             <Clickable style={{ color: 'red' }}>
               <Link
                 className={classes.link}
-                onClick={() => abortLaunch(launch.flightNumber)}
+                onClick={() => handleAbort(launch.flightNumber)}
               >
                 ✖
               </Link>
@@ -58,7 +67,7 @@ const Upcoming = (props) => {
           <td>{launch.target}</td>
         </tr>
       ));
-  }, [launches, abortLaunch, classes.link]);
+  }, [launches, handleAbort, classes.link]); // handleAbort is stable now
 
   return (
     <Appear id="upcoming" animate show={entered}>
