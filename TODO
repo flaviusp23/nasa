@@ -2,5 +2,5 @@ DONE eroare cand lipseste numele
 daca textul e prea lung sa apara ...
 DONE paginare
 DONE cand dau abort nu se actualiaza live
-la paginare sa nu mearga pe alta pagina daca nu exista continut
+DONE la paginare sa nu mearga pe alta pagina daca nu exista continut
 deploy

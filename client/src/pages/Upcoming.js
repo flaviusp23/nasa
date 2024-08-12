@@ -20,29 +20,37 @@ const Upcoming = (props) => {
   const [launches, setLaunches] = useState([]);
   const [currentPage, setCurrentPage] = useState(Number(page));
 
-  const fetchLaunches = useCallback(async () => {
-    const fetchedLaunches = await httpGetLaunchesUpcoming(currentPage);
-    setLaunches(fetchedLaunches);
-  }, [currentPage]);
+  const fetchLaunches = useCallback(async (pageToFetch) => {
+    const fetchedLaunches = await httpGetLaunchesUpcoming(pageToFetch);
+    return fetchedLaunches;
+  }, []);
 
   useEffect(() => {
-    fetchLaunches();
-  }, [fetchLaunches]);
+    const loadLaunches = async () => {
+      const fetchedLaunches = await fetchLaunches(currentPage);
+      setLaunches(fetchedLaunches);
+    };
+    loadLaunches();
+  }, [fetchLaunches, currentPage]);
 
-  const handlePageChange = (newPage) => {
+  const handlePageChange = async (newPage) => {
     if (newPage > 0) {
-      setCurrentPage(newPage);
-      history.push(`/upcoming/${newPage}`);
+      // Fetch launches for the next page to check if it's empty
+      const nextPageLaunches = await fetchLaunches(newPage);
+      if (nextPageLaunches.length > 0) {
+        setCurrentPage(newPage);
+        history.push(`/upcoming/${newPage}`);
+      }
     }
   };
 
-  // Memoize handleAbort to avoid it changing on every render
   const handleAbort = useCallback(
     async (id) => {
       await abortLaunch(id); // Abort the launch
-      fetchLaunches(); // Ensure it refetches the launches
+      const updatedLaunches = await fetchLaunches(currentPage); // Refetch launches after abort
+      setLaunches(updatedLaunches);
     },
-    [abortLaunch, fetchLaunches]
+    [abortLaunch, fetchLaunches, currentPage]
   );
 
   const tableBody = useMemo(() => {
@@ -67,7 +75,7 @@ const Upcoming = (props) => {
           <td>{launch.target}</td>
         </tr>
       ));
-  }, [launches, handleAbort, classes.link]); // handleAbort is stable now
+  }, [launches, handleAbort, classes.link]);
 
   return (
     <Appear id="upcoming" animate show={entered}>

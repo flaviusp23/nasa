@@ -11,22 +11,34 @@ const History = (props) => {
   const [launches, setLaunches] = useState([]);
   const [currentPage, setCurrentPage] = useState(Number(page));
 
-  const fetchLaunches = useCallback(async () => {
-    const fetchedLaunches = await httpGetLaunchesHistory(currentPage);
-    setLaunches(fetchedLaunches);
-  }, [currentPage]);
+  // Fetch launches based on the page number
+  const fetchLaunches = useCallback(async (pageToFetch) => {
+    const fetchedLaunches = await httpGetLaunchesHistory(pageToFetch);
+    return fetchedLaunches;
+  }, []);
 
+  // Load launches when the component mounts or page changes
   useEffect(() => {
-    fetchLaunches();
-  }, [fetchLaunches]);
+    const loadLaunches = async () => {
+      const fetchedLaunches = await fetchLaunches(currentPage);
+      setLaunches(fetchedLaunches);
+    };
+    loadLaunches();
+  }, [fetchLaunches, currentPage]);
 
-  const handlePageChange = (newPage) => {
+  // Handle page changes with data check
+  const handlePageChange = async (newPage) => {
     if (newPage > 0) {
-      setCurrentPage(newPage);
-      history.push(`/history/${newPage}`);
+      // Fetch launches for the new page to check if it's empty
+      const nextPageLaunches = await fetchLaunches(newPage);
+      if (nextPageLaunches.length > 0) {
+        setCurrentPage(newPage);
+        history.push(`/history/${newPage}`);
+      }
     }
   };
 
+  // Memoize table body
   const tableBody = useMemo(() => {
     return launches.map((launch) => (
       <tr key={String(launch.flightNumber)}>
