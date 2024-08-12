@@ -1,25 +1,26 @@
-const API_URL = 'v1'
+// Define base URL from environment variable
+const BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000/v1';
 
 async function httpGetPlanets() {
-  const response = await fetch(`${API_URL}/planets`);
+  const response = await fetch(`${BASE_URL}/planets`);
   return await response.json();
 }
 
 async function httpGetLaunchesUpcoming(page = 1, limit = 5) {
-  const response = await fetch(`${API_URL}/launches/upcoming?page=${page}&limit=${limit}`);
+  const response = await fetch(`${BASE_URL}/launches/upcoming?page=${page}&limit=${limit}`);
   const fetchedLaunchesUpcoming = await response.json();
   return fetchedLaunchesUpcoming;
 }
 
 async function httpGetLaunchesHistory(page = 1, limit = 5) {
-  const response = await fetch(`${API_URL}/launches/history?page=${page}&limit=${limit}`);
+  const response = await fetch(`${BASE_URL}/launches/history?page=${page}&limit=${limit}`);
   const fetchedLaunchesHistory = await response.json();
   return fetchedLaunchesHistory;
 }
 
 async function httpSubmitLaunch(launch) {
   try {
-    return await fetch(`${API_URL}/launches`, {
+    return await fetch(`${BASE_URL}/launches`, {
       method: "post",
       headers: {
         "Content-Type": "application/json",
@@ -35,18 +36,16 @@ async function httpSubmitLaunch(launch) {
 }
 
 async function httpAbortLaunch(id) {
-  try{
-    return await fetch(`${API_URL}/launches/${id}`,{
-      method:"delete",
+  try {
+    return await fetch(`${BASE_URL}/launches/${id}`, {
+      method: "delete",
     });
-  }
-  catch(err){
-    console.log(err)
-    return{
+  } catch(err) {
+    console.log(err);
+    return {
       ok: false,
-    }
+    };
   }
-  
 }
 
 export {
