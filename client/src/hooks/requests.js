@@ -5,13 +5,17 @@ async function httpGetPlanets() {
   return await response.json();
 }
 
-async function httpGetLaunches() {
-  const response = await fetch(`${API_URL}/launches`);
-  const fetchedLaunches = await response.json();
-  return fetchedLaunches
+async function httpGetLaunchesUpcoming() {
+  const response = await fetch(`${API_URL}/launches/upcoming`);
+  const fetchedLaunchesUpcoming = await response.json();
+  return fetchedLaunchesUpcoming
 }
 
-
+async function httpGetLaunchesHistory() {
+  const response = await fetch(`${API_URL}/launches/history`);
+  const fetchedLaunchesHistory = await response.json();
+  return fetchedLaunchesHistory
+}
 
 async function httpSubmitLaunch(launch) {
   try {
@@ -47,7 +51,8 @@ async function httpAbortLaunch(id) {
 
 export {
   httpGetPlanets,
-  httpGetLaunches,
   httpSubmitLaunch,
   httpAbortLaunch,
+  httpGetLaunchesUpcoming,
+  httpGetLaunchesHistory,
 };

@@ -1,18 +1,22 @@
 import { useCallback, useEffect, useState } from "react";
 
 import {
-  httpGetLaunches,
   httpSubmitLaunch,
   httpAbortLaunch,
+  httpGetLaunchesHistory,
+  httpGetLaunchesUpcoming,
 } from './requests';
 
 function useLaunches(onSuccessSound, onAbortSound, onFailureSound) {
-  const [launches, saveLaunches] = useState([]);
+  const [upcomingLaunches, saveUpcomingLaunches] = useState([]);
+  const [historyLaunches, saveHistoryLaunches] = useState([]);
   const [isPendingLaunch, setPendingLaunch] = useState(false);
 
   const getLaunches = useCallback(async () => {
-    const fetchedLaunches = await httpGetLaunches();
-    saveLaunches(fetchedLaunches);
+    const upcoming = await httpGetLaunchesUpcoming();
+    const history = await httpGetLaunchesHistory();
+    saveUpcomingLaunches(upcoming);
+    saveHistoryLaunches(history);
   }, []);
 
   useEffect(() => {
@@ -62,7 +66,8 @@ function useLaunches(onSuccessSound, onAbortSound, onFailureSound) {
   }, [getLaunches, onAbortSound, onFailureSound]);
 
   return {
-    launches,
+    upcomingLaunches,
+    historyLaunches,
     isPendingLaunch,
     submitLaunch,
     abortLaunch,
