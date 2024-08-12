@@ -38,6 +38,10 @@ const History = (props) => {
             <tbody>{tableBody}</tbody>
           </table>
         </Table>
+        <div style={{ display: "flex", justifyContent: "center", marginTop: "1rem" }}>
+          <span style={{ fontSize: "2rem", margin: "0 1rem", cursor: "pointer" }}>←</span>
+          <span style={{ fontSize: "2rem", margin: "0 1rem", cursor: "pointer" }}>→</span>
+        </div>
       </Appear>
     </article>
   );

@@ -11,10 +11,10 @@ async function httpGetLaunchesUpcoming() {
   return fetchedLaunchesUpcoming
 }
 
-async function httpGetLaunchesHistory() {
-  const response = await fetch(`${API_URL}/launches/history`);
+async function httpGetLaunchesHistory(page = 1, limit = 5) {
+  const response = await fetch(`${API_URL}/launches/history?page=${page}&limit=${limit}`);
   const fetchedLaunchesHistory = await response.json();
-  return fetchedLaunchesHistory
+  return fetchedLaunchesHistory;
 }
 
 async function httpSubmitLaunch(launch) {
