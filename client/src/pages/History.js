@@ -21,8 +21,10 @@ const History = (props) => {
   }, [fetchLaunches]);
 
   const handlePageChange = (newPage) => {
-    setCurrentPage(newPage);
-    history.push(`/history/${newPage}`);
+    if (newPage > 0) {
+      setCurrentPage(newPage);
+      history.push(`/history/${newPage}`);
+    }
   };
 
   const tableBody = useMemo(() => {

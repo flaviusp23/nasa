@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import { withStyles, Appear, Link, Paragraph, Table, Words } from 'arwes';
-import Clickable from '../components/Clickable';
-import { useParams } from 'react-router-dom';
-import { httpGetLaunchesUpcoming } from '../hooks/requests';
+import React, { useEffect, useState, useCallback, useMemo } from 'react';
+import { Appear, Table, Paragraph, Words, withStyles } from 'arwes';
+import { useParams, useHistory } from 'react-router-dom';
+import { httpGetLaunchesUpcoming } from '../hooks/requests'; // Adjust the path if needed
+import Clickable from '../components/Clickable'; // Ensure this path is correct
+import { Link } from 'react-router-dom'; // Import Link for navigation
 
 const styles = () => ({
   link: {
@@ -14,39 +15,50 @@ const styles = () => ({
 const Upcoming = (props) => {
   const { entered, abortLaunch, classes } = props;
   const { page = 1 } = useParams(); // Get the page number from URL
+  const history = useHistory();
+
   const [launches, setLaunches] = useState([]);
+  const [currentPage, setCurrentPage] = useState(Number(page));
+
+  const fetchLaunches = useCallback(async () => {
+    const fetchedLaunches = await httpGetLaunchesUpcoming(currentPage);
+    setLaunches(fetchedLaunches);
+  }, [currentPage]);
 
   useEffect(() => {
-    const fetchLaunches = async () => {
-      const upcomingLaunches = await httpGetLaunchesUpcoming(Number(page));
-      setLaunches(upcomingLaunches);
-    };
-
     fetchLaunches();
-  }, [page]);
+  }, [fetchLaunches]);
 
-  // Create table rows based on launches
-  const tableBody = launches
-    .filter((launch) => launch.upcoming)
-    .map((launch) => (
-      <tr key={String(launch.flightNumber)}>
-        <td>
-          <Clickable style={{ color: 'red' }}>
-            <Link
-              className={classes.link}
-              onClick={() => abortLaunch(launch.flightNumber)}
-            >
-              ✖
-            </Link>
-          </Clickable>
-        </td>
-        <td>{launch.flightNumber}</td>
-        <td>{new Date(launch.launchDate).toDateString()}</td>
-        <td>{launch.mission}</td>
-        <td>{launch.rocket}</td>
-        <td>{launch.target}</td>
-      </tr>
-    ));
+  const handlePageChange = (newPage) => {
+    if (newPage > 0) {
+      setCurrentPage(newPage);
+      history.push(`/upcoming/${newPage}`);
+    }
+  };
+
+  const tableBody = useMemo(() => {
+    return launches
+      .filter((launch) => launch.upcoming)
+      .map((launch) => (
+        <tr key={String(launch.flightNumber)}>
+          <td>
+            <Clickable style={{ color: 'red' }}>
+              <Link
+                className={classes.link}
+                onClick={() => abortLaunch(launch.flightNumber)}
+              >
+                ✖
+              </Link>
+            </Clickable>
+          </td>
+          <td>{launch.flightNumber}</td>
+          <td>{new Date(launch.launchDate).toDateString()}</td>
+          <td>{launch.mission}</td>
+          <td>{launch.rocket}</td>
+          <td>{launch.target}</td>
+        </tr>
+      ));
+  }, [launches, abortLaunch, classes.link]);
 
   return (
     <Appear id="upcoming" animate show={entered}>
@@ -79,6 +91,20 @@ const Upcoming = (props) => {
           </tbody>
         </table>
       </Table>
+      <div style={{ display: 'flex', justifyContent: 'center', marginTop: '1rem' }}>
+        <span
+          style={{ fontSize: '2rem', margin: '0 1rem', cursor: 'pointer' }}
+          onClick={() => handlePageChange(currentPage - 1)}
+        >
+          ←
+        </span>
+        <span
+          style={{ fontSize: '2rem', margin: '0 1rem', cursor: 'pointer' }}
+          onClick={() => handlePageChange(currentPage + 1)}
+        >
+          →
+        </span>
+      </div>
     </Appear>
   );
 };
