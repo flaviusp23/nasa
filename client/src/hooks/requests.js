@@ -5,10 +5,10 @@ async function httpGetPlanets() {
   return await response.json();
 }
 
-async function httpGetLaunchesUpcoming() {
-  const response = await fetch(`${API_URL}/launches/upcoming`);
+async function httpGetLaunchesUpcoming(page = 1, limit = 5) {
+  const response = await fetch(`${API_URL}/launches/upcoming?page=${page}&limit=${limit}`);
   const fetchedLaunchesUpcoming = await response.json();
-  return fetchedLaunchesUpcoming
+  return fetchedLaunchesUpcoming;
 }
 
 async function httpGetLaunchesHistory(page = 1, limit = 5) {

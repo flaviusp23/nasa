@@ -1,34 +1,35 @@
-import { useState } from "react";
-import { Switch, Route } from "react-router-dom";
-import { Frame, withSounds, withStyles } from "arwes";
+import { useState } from 'react';
+import { Switch, Route, useLocation, useHistory } from 'react-router-dom';
+import { Frame, withSounds, withStyles } from 'arwes';
 
-import usePlanets from "../hooks/usePlanets";
-import useLaunches from "../hooks/useLaunches";
+import usePlanets from '../hooks/usePlanets';
+import useLaunches from '../hooks/useLaunches';
+import Centered from '../components/Centered';
+import Header from '../components/Header';
+import Footer from '../components/Footer';
 
-import Centered from "../components/Centered";
-import Header from "../components/Header";
-import Footer from "../components/Footer";
-
-import Launch from "./Launch";
-import History from "./History";
-import Upcoming from "./Upcoming";
+import Launch from './Launch';
+import History from './History';
+import Upcoming from './Upcoming';
 
 const styles = () => ({
   content: {
-    display: "flex",
-    flexDirection: "column",
-    height: "100vh",
-    margin: "auto",
+    display: 'flex',
+    flexDirection: 'column',
+    height: '100vh',
+    margin: 'auto',
   },
   centered: {
     flex: 1,
-    paddingTop: "20px",
-    paddingBottom: "10px",
+    paddingTop: '20px',
+    paddingBottom: '10px',
   },
 });
 
 const AppLayout = (props) => {
   const { sounds, classes } = props;
+  const location = useLocation();
+  const history = useHistory();
 
   const [frameVisible, setFrameVisible] = useState(true);
   const animateFrame = () => {
@@ -60,10 +61,10 @@ const AppLayout = (props) => {
           animate
           show={frameVisible}
           corners={4}
-          style={{ visibility: frameVisible ? "visible" : "hidden" }}
+          style={{ visibility: frameVisible ? 'visible' : 'hidden' }}
         >
           {(anim) => (
-            <div style={{ padding: "20px" }}>
+            <div style={{ padding: '20px' }}>
               <Switch>
                 <Route exact path="/">
                   <Launch
@@ -81,17 +82,19 @@ const AppLayout = (props) => {
                     isPendingLaunch={isPendingLaunch}
                   />
                 </Route>
-                <Route exact path="/upcoming">
+                <Route exact path="/upcoming/:page">
                   <Upcoming
                     entered={anim.entered}
                     launches={upcomingLaunches}
                     abortLaunch={abortLaunch}
                   />
                 </Route>
-                <Route exact path="/history">
+                <Route exact path="/history/:page">
                   <History
                     entered={anim.entered}
-                    launches={historyLaunches} // Pass history launches directly
+                    launches={historyLaunches}
+                    location={location}
+                    history={history}
                   />
                 </Route>
               </Switch>
