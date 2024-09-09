@@ -1,34 +1,52 @@
+import axios from 'axios';
+
 // Define base URL from environment variable
-const BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000/v1';
+const BASE_URL = `${window.location.origin}/v1`;
 
 async function httpGetPlanets() {
-  const response = await fetch(`${BASE_URL}/planets`);
-  return await response.json();
+  try {
+    const response = await axios.get(`${BASE_URL}/planets`);
+    return response.data;
+  } catch (err) {
+    console.error(err);
+    return [];
+  }
 }
 
 async function httpGetLaunchesUpcoming(page = 1, limit = 5) {
-  const response = await fetch(`${BASE_URL}/launches/upcoming?page=${page}&limit=${limit}`);
-  const fetchedLaunchesUpcoming = await response.json();
-  return fetchedLaunchesUpcoming;
+  try {
+    const response = await axios.get(`${BASE_URL}/launches/upcoming`, {
+      params: { page, limit },
+    });
+    return response.data;
+  } catch (err) {
+    console.error(err);
+    return [];
+  }
 }
 
 async function httpGetLaunchesHistory(page = 1, limit = 5) {
-  const response = await fetch(`${BASE_URL}/launches/history?page=${page}&limit=${limit}`);
-  const fetchedLaunchesHistory = await response.json();
-  return fetchedLaunchesHistory;
+  try {
+    const response = await axios.get(`${BASE_URL}/launches/history`, {
+      params: { page, limit },
+    });
+    return response.data;
+  } catch (err) {
+    console.error(err);
+    return [];
+  }
 }
 
 async function httpSubmitLaunch(launch) {
   try {
-    return await fetch(`${BASE_URL}/launches`, {
-      method: "post",
+    const response = await axios.post(`${BASE_URL}/launches`, launch, {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(launch),
     });
-  } catch(err) {
-    console.log(err);
+    return response;
+  } catch (err) {
+    console.error(err);
     return {
       ok: false,
     };
@@ -37,11 +55,10 @@ async function httpSubmitLaunch(launch) {
 
 async function httpAbortLaunch(id) {
   try {
-    return await fetch(`${BASE_URL}/launches/${id}`, {
-      method: "delete",
-    });
-  } catch(err) {
-    console.log(err);
+    const response = await axios.delete(`${BASE_URL}/launches/${id}`);
+    return response;
+  } catch (err) {
+    console.error(err);
     return {
       ok: false,
     };
